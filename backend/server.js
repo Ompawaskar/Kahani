@@ -1,0 +1,23 @@
+const express = require('express')
+const mongoose = require('mongoose')
+require('dotenv').config()
+const storyRoutes = require('./routers/storyRoutes')
+
+// Create express app
+const app = express()
+
+//Middlewares
+app.use(express.json())
+
+//Set Routes
+app.use('/api/kahani',storyRoutes);
+
+mongoose.connect(process.env.MONGODB_URI).
+    then((response) => {
+        console.log("Connected to DB");
+        app.listen(process.env.PORT, () => {
+            console.log("Listening on port 4000");
+        })
+    }).catch((err) => {
+        console.log(err);
+    })
