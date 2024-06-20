@@ -1,5 +1,6 @@
 import React from 'react'
-import { Link , NavLink } from 'react-router-dom'
+import { Link } from 'react-router-dom'
+
 
 function Navbar() {
     return (
@@ -8,7 +9,7 @@ function Navbar() {
                 <div className="flex flex-wrap justify-between items-center mx-auto max-w-screen-xl">
                     <Link to="/" className="flex items-center">
                         <img
-                            src="./logo1.png"
+                            src="../../../public/logo1.png"
                             className="mr-3 h-12"
                             alt="Logo"
                         />

@@ -2,11 +2,15 @@ const express = require('express')
 const mongoose = require('mongoose')
 require('dotenv').config()
 const storyRoutes = require('./routers/storyRoutes')
+const cors = require('cors')
 
 // Create express app
 const app = express()
 
 //Middlewares
+app.use(cors({
+    origin: 'http://localhost:5173' // Allow requests from this origin
+}));
 app.use(express.json())
 
 //Set Routes

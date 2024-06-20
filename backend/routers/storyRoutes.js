@@ -1,5 +1,5 @@
 const express = require('express')
-const {getStories,getStory,createStory,answerQuestion} = require('../controllers/storyControllers')
+const {getStories,getStory,createStory,answerQuestion,deleteStory} = require('../controllers/storyControllers')
 
 const router = express.Router()
 
@@ -11,6 +11,9 @@ router.get('/:id',getStory)
 
 //Create Story
 router.post('/',createStory)
+
+//Delete Story
+router.delete('/:id',deleteStory)
 
 //Answer Question
 router.post('/question',answerQuestion)

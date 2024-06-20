@@ -33,12 +33,32 @@ const getStory = async (req, res) => {
   }
 }
 
+const deleteStory = async (req,res) => {
+  const _id = req.params.id
+
+  try {
+    const response = await Stories.findByIdAndDelete(_id);
+
+    if(!response){
+      res.status(500).json({error:"Error Deleting Story"})
+    }
+
+    res.status(200).json(response)
+  } catch (error) {
+    res.status(500).json({error:error.message})
+  }
+}
+
 const createStory = async (req, res) => {
+  console.log(req.body);
   const { description } = req.body;
+  console.log(description);
 
   try {
     const story = await generateStory(description);
+    console.log(story);
     const imagePrompts = await generateImagePrompts(story);
+    console.log(imagePrompts);
     let fetchedImages = [];
 
     if (imagePrompts) {
@@ -82,7 +102,9 @@ const createStory = async (req, res) => {
 };
 
 const answerQuestion = async (req, res) => {
+  console.log("answering Question");
   const { _id, question } = req.body;
+  console.log(_id);
 
   try {
     const storyDocument = await Stories.findById(_id);
@@ -93,7 +115,7 @@ const answerQuestion = async (req, res) => {
 
     const { story } = storyDocument;
 
-    const questionPrompt = `Answer the question with respect to the story. The response should start with the answer. Story is: ${story} . Question is: ${question}`
+    const questionPrompt = `Answer the question with respect to the story. The response should start with the answer. If the question is not related to answer respond with rejected. Story is: ${story} . Question is: ${question}`
     const prompt = {
       contents: [
         {
@@ -124,11 +146,48 @@ const answerQuestion = async (req, res) => {
 
     const formattedText = extractedText.trim().toLowerCase();
 
-    res.status(200).json({ answer: formattedText });
+    const audioUri = await getAudio(formattedText);
+
+    res.status(200).json({ answer: audioUri });
 
   } catch (error) {
     res.status(200).json({ error: error.message })
   }
+}
+
+const getAudio = async (text) => {
+    const body = {
+      "Text": text,
+      "VoiceId": "Scarlett",
+      "Bitrate": "192k",
+      "Speed": "0",
+      "Pitch": "1",
+      "Codec": "libmp3lame",
+     " Temperature": 0.25
+    }
+
+    try {
+      const response = await fetch('https://api.v7.unrealspeech.com/speech',{
+        method:"POST",
+        headers:{
+          "Content-Type":"application/json",
+          "Authorization" : `Bearer ${process.env.UNREAL_AUDIO}`
+        },
+        body: JSON.stringify(body)
+      })
+
+      const result = await response.json();
+
+      if(!response.ok){
+        throw new Error("Error generating answer",response.error)
+      }
+
+      return result['OutputUri']
+
+
+    } catch (error) {
+      throw error;
+    }
 }
 
 const generateStory = async (description) => {
@@ -328,4 +387,4 @@ const get_image_from_url = async (url) => {
   }
 }
 
-module.exports = { getStories, getStory, createStory, answerQuestion }
+module.exports = { getStories, getStory, createStory, answerQuestion, deleteStory }

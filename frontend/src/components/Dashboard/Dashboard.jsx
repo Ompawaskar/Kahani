@@ -1,4 +1,4 @@
-import {Link} from "react-router-dom"
+import { Link, NavLink, Outlet } from "react-router-dom"
 import {
   Bell,
   CircleUser,
@@ -11,7 +11,6 @@ import {
   ShoppingCart,
   Users,
 } from "lucide-react"
-
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
@@ -31,10 +30,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Input } from "@/components/ui/input"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import CreateStory from "./CreateStory"
-import MyStories from "./MyStories"
-import StoryCard from "./StoryCard"
-import Story from "../Story/Story"
+
 
 export function Dashboard() {
   return (
@@ -53,27 +49,31 @@ export function Dashboard() {
           </div>
           <div className="flex-1">
             <nav className="grid items-start px-2 text-sm font-medium lg:px-4">
-              <Link
-                href="#"
-                className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
+              <NavLink
+                to="/dashboard"
+                className={({ isActive }) =>
+                  "flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary " +
+                  (isActive ? "bg-muted" : "text-muted-foreground")
+                }
+                end
               >
                 <Home className="h-4 w-4" />
                 Dashboard
-              </Link>
-              <Link
-                href="#"
-                className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
+              </NavLink>
+              <NavLink
+                to='/dashboard/all-stories'
+                className={({ isActive }) => "flex items-center gap-3 rounded-lg px-3 py-2  transition-all hover:text-primary " + (isActive ? " bg-muted" : " text-muted-foreground")}
               >
                 <ShoppingCart className="h-4 w-4" />
                 All Stories
-              </Link>
-              <Link
-                href="#"
-                className="flex items-center gap-3 rounded-lg bg-muted px-3 py-2 text-primary transition-all hover:text-primary"
+              </NavLink>
+              <NavLink
+                to='/dashboard/my-stories'
+                className={({ isActive }) => "flex items-center gap-3 rounded-lg px-3 py-2  transition-all hover:text-primary " + (isActive ? " bg-muted" : " text-muted-foreground")}
               >
                 <Package className="h-4 w-4" />
                 My Stories
-              </Link>
+              </NavLink>
             </nav>
           </div>
           <div className="mt-auto p-4">
@@ -202,9 +202,8 @@ export function Dashboard() {
             </DropdownMenuContent>
           </DropdownMenu>
         </header>
-       {/* <CreateStory /> */}
-       {/* <MyStories /> */}
-       <Story/>
+
+        {<Outlet />}
       </div>
     </div>
   )
