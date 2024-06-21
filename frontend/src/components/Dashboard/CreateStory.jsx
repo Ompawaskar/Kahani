@@ -9,7 +9,7 @@ function CreateStory() {
     const [prompt, setPrompt] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
-    const { state, dispatch } = useContext(StoriesContext)
+    const { dispatch } = useContext(StoriesContext)
     const navigate = useNavigate()
 
     const generateStory = async (e) => {
@@ -33,26 +33,16 @@ function CreateStory() {
                 setPrompt(null)
                 setError(result.error);
                 setLoading(false)
-                console.log("Prompt" ,prompt);
                 return 
             }
 
-            // Add item to context and local storage
-            let exsistingStories = localStorage.getItem('stories');
-
-            let StoriesArray = exsistingStories ? JSON.parse(exsistingStories)['all_stories'] : [];
-
-            StoriesArray.unshift(result);
-
-            localStorage.setItem('stories', JSON.stringify({ 'all_stories': StoriesArray }));
-
+            // Add item to context 
             dispatch({ type: "ADD_STORIES", payload: result });
 
             //Navigate
             const { _id } = result;
             navigate(`/dashboard/story/${_id}`)
-            
-
+        
         } catch (error) {
             console.log(error);
         }finally{

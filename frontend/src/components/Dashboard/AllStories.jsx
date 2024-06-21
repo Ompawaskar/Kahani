@@ -1,8 +1,9 @@
 import React from 'react'
+import { LoaderIcon } from "lucide-react"
 
 function AllStories() {
     return (
-        <div></div>
+        <LoaderIcon className="animate-spin" />
     )
 }
 

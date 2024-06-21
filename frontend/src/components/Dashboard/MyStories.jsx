@@ -1,4 +1,4 @@
-import React , {useContext} from 'react'
+import React, { useContext } from 'react'
 import { Button } from '../ui/button'
 import StoryCard from './StoryCard'
 import { ScrollArea } from "@/components/ui/scroll-area"
@@ -7,12 +7,10 @@ import { StoriesContext } from '../../context/StoriesContext'
 
 
 function MyStories() {
-  const { stories, dispatch } = useContext(StoriesContext)
-  console.log("Stories",stories);
-  const {all_stories} = stories
+  const { stories } = useContext(StoriesContext)
+  console.log("Stories", stories);
 
-
-  if (all_stories.length == 0) {
+  if (stories.length === 0) {
     return (
       <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
         <div className="flex items-center">
@@ -42,12 +40,12 @@ function MyStories() {
     return (
       <ScrollArea className=" rounded-md border p-4">
         <div className='max-h-screen grid grid-cols-3 gap-4 m-8'>
-          {all_stories.map((story) => <StoryCard 
-          key={story._id}
-          _id={story._id}
-          title={story.title}
-          coverImage={story.images && story.images.length > 0 ? story.images[0] : './logo1.png'} // Add fallback for missing images
-           />)}
+          {stories.map((story) => <StoryCard
+            key={story._id}
+            _id={story._id}
+            title={story.title}
+            coverImage={story.images && story.images.length > 0 ? story.images[0] : './logo1.png'} // Add fallback for missing images
+          />)}
         </div>
       </ScrollArea>
     )

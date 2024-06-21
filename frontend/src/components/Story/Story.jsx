@@ -26,21 +26,27 @@ import { StoriesContext } from '../../context/StoriesContext'
 import { ToastAction } from "@/components/ui/toast"
 import { useToast } from "@/components/ui/use-toast"
 import { ReloadIcon } from "@radix-ui/react-icons"
+import { LoaderIcon } from "lucide-react"
 
 
 function Story() {
     const { id } = useParams();
-    const { stories, dispatch } = useContext(StoriesContext)
-    const { all_stories } = stories
-    const { toast } = useToast()
+    const { stories, dispatch , loading} = useContext(StoriesContext)
+    const { toast } = useToast();
     const [question, setQuestion] = useState(null);
-    const [loading, setLoading] = useState(false)
+    const [loadingState, setLoadingState] = useState(false);
     const [audioUri, setAudioUri] = useState(null)
-    // const {state} = useContext(StoriesContext)
-
-    const StoryObject = all_stories.find(obj => obj._id === id);
+    const StoryObject = stories.find(obj => obj._id === id);
     const navigate = useNavigate()
 
+    if (loading) {
+        return (
+            <div className='flex items-center justify-center h-full'>
+            <LoaderIcon className="animate-spin w-full text-purple-500 h-[100px]" />
+            </div>
+        )
+      }
+    
     if (!StoryObject) {
         <div>Story Not Found</div>
     }
@@ -63,18 +69,7 @@ function Story() {
                 return
             }
 
-            // Delete item fro  context and local storage
-            let exsistingStories = localStorage.getItem('stories');
-
-            let StoriesArray = exsistingStories ? JSON.parse(exsistingStories)['all_stories'] : [];
-
-            const updatedStories = StoriesArray.filter((story) => story._id !== result._id);
-
-            localStorage.setItem('stories', JSON.stringify({ 'all_stories': updatedStories }));
-
-            // console.log("State",state);
-            console.log("Storeee", stories);
-            dispatch({ type: "DELETE_STORIES", payload: result });
+            dispatch({ type: "DELETE_STORY", payload: result });
 
             //Navigate
             navigate(`/dashboard/all-stories`)
@@ -87,7 +82,7 @@ function Story() {
 
     const answerQuestion = async (e) => {
         e.preventDefault()
-        setLoading(true)
+        setLoadingState(true)
         try {
             const response = await fetch(`http://localhost:4000/api/kahani/question`, {
                 method: "POST",
@@ -122,7 +117,7 @@ function Story() {
 
         finally {
             setQuestion(null)
-            setLoading(false)
+            setLoadingState(false)
         }
 
     }
@@ -154,7 +149,7 @@ function Story() {
             </div>
             <div className='flex mt-4'>
                 <div className='w-1/2 flex justify-center items-center'>
-                    <ScrollArea className="h-[250px] w-[350px] rounded-md border-none font-sans font-semibold p-4 shadow-md">
+                    <ScrollArea className="h-[250px] w-[350px] rounded-md border border-purple-400 font-sans font-semibold p-4 shadow-md">
                         {StoryObject.story}
                     </ScrollArea>
 
@@ -185,10 +180,10 @@ function Story() {
             </div>
             <div className='mt-8 flex justify-center items-center'>
                 <form className='w-1/2 flex gap-2' onSubmit={answerQuestion}>
-                    <Input type='text' placeholder='Enter any Questions here..' className='shadow-sm' value={question} onChange={(e) => {
+                    <Input type='text' placeholder='Enter any Questions here..' className='shadow-sm' value={question} required onChange={(e) => {
                         setQuestion(e.target.value)
                     }} />
-                    {loading ? <Button disabled className='bg-white'>
+                    {loadingState ? <Button disabled className='bg-white'>
                         <ReloadIcon className="mr-2 h-4 w-4 animate-spin bg-white" color="rgb(147 51 234)" />
                          </Button> : 
                          <Button variant='outline' size='icon' className='border-none '>

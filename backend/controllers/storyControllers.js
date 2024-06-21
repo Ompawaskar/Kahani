@@ -104,7 +104,7 @@ const createStory = async (req, res) => {
 const answerQuestion = async (req, res) => {
   console.log("answering Question");
   const { _id, question } = req.body;
-  console.log(_id);
+  console.log(question);
 
   try {
     const storyDocument = await Stories.findById(_id);
@@ -115,7 +115,7 @@ const answerQuestion = async (req, res) => {
 
     const { story } = storyDocument;
 
-    const questionPrompt = `Answer the question with respect to the story. The response should start with the answer. If the question is not related to answer respond with rejected. Story is: ${story} . Question is: ${question}`
+    const questionPrompt = `Answer the question with respect to the story. The response should start with the answer. If the question is not related to answer do not respond. Story is: ${story} . Question is: ${question}`
     const prompt = {
       contents: [
         {
@@ -137,6 +137,7 @@ const answerQuestion = async (req, res) => {
     })
 
     const response = await result.json()
+    
 
     if (!response || !response.candidates || !response.candidates[0].content || !response.candidates[0].content.parts) {
       return res.status(400).json({ error: "Error in generating answer" })
@@ -145,6 +146,7 @@ const answerQuestion = async (req, res) => {
     const extractedText = response.candidates[0].content.parts[0].text;
 
     const formattedText = extractedText.trim().toLowerCase();
+    console.log(formattedText);
 
     const audioUri = await getAudio(formattedText);
 

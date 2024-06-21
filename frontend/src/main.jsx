@@ -10,6 +10,7 @@ import MyStories from './components/Dashboard/MyStories.jsx'
 import CreateStory from './components/Dashboard/CreateStory.jsx'
 import { StoriesProvider } from './context/StoriesContext.jsx'
 import Story from './components/Story/Story.jsx'
+import AllStories from './components/Dashboard/AllStories.jsx'
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -19,6 +20,7 @@ const router = createBrowserRouter(
         <Route path='' element={<CreateStory />}/>
         <Route path='all-stories' element={<MyStories />}/>
         <Route path='story/:id' element={<Story />}/>
+        <Route path='my-stories' element={<AllStories />}/>
       </Route>
     </Route>
     
