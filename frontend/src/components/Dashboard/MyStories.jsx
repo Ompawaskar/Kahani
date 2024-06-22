@@ -8,14 +8,11 @@ import { StoriesContext } from '../../context/StoriesContext'
 
 function MyStories() {
   const { stories } = useContext(StoriesContext)
-  console.log("Stories", stories);
-
-  if (stories.length === 0) {
+  
+  if (!stories || stories.length === 0) {
     return (
       <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
-        <div className="flex items-center">
-          <h1 className="text-lg font-semibold md:text-2xl">Inventory</h1>
-        </div>
+        
         <div
           className="flex flex-1 items-center justify-center rounded-lg border border-dashed shadow-sm" x-chunk="dashboard-02-chunk-1"
         >
@@ -24,7 +21,7 @@ function MyStories() {
               You have no Stories
             </h3>
             <p className="text-sm text-muted-foreground">
-              You can see the Stories you create as soon as you create.
+              You can see Stories as soon as you create.
             </p>
             <Link
               to='/dashboard'>

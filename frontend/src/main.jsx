@@ -11,6 +11,8 @@ import CreateStory from './components/Dashboard/CreateStory.jsx'
 import { StoriesProvider } from './context/StoriesContext.jsx'
 import Story from './components/Story/Story.jsx'
 import AllStories from './components/Dashboard/AllStories.jsx'
+import Login from './pages/Login.jsx'
+import SignUp from './pages/SignUp.jsx'
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -22,6 +24,9 @@ const router = createBrowserRouter(
         <Route path='story/:id' element={<Story />}/>
         <Route path='my-stories' element={<AllStories />}/>
       </Route>
+      <Route path='/login' element = {<Login />} />
+      <Route path='/signup' element = {<SignUp />} />
+
     </Route>
     
   )
