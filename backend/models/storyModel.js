@@ -13,7 +13,20 @@ const storySchema = new Schema({
     },
     images:{
         type:[String]
+    },
+    user_id:{
+        type:String,
+        required:true
+    },
+    upvotes:{
+        type:Number,
+        required:true
+    },
+    status:{
+        type:String,
+        required:true
     }
+
 },{timestamps:true});
 
 module.exports = mongoose.model('story',storySchema);
