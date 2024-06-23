@@ -53,6 +53,7 @@ const createStory = async (req, res) => {
   console.log(req.body);
   const { description } = req.body;
   console.log(description);
+  const { _id } = req.user
 
   try {
     const story = await generateStory(description);
@@ -88,6 +89,10 @@ const createStory = async (req, res) => {
       title: description,
       story,
       images: fetchedImages,
+      user_id: _id,
+      upvotes:0,
+      downvotes:0,
+      status:"private"
     });
 
     if (!storyDocument) {

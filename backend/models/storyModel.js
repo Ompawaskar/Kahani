@@ -22,6 +22,10 @@ const storySchema = new Schema({
         type:Number,
         required:true
     },
+    downvotes:{
+        type:Number,
+        required:true
+    },
     status:{
         type:String,
         required:true

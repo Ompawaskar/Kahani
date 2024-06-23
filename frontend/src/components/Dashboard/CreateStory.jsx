@@ -4,13 +4,16 @@ import { Button } from '../ui/button'
 import { StoriesContext } from '../../context/StoriesContext';
 import { useNavigate } from 'react-router-dom';
 import { ReloadIcon } from "@radix-ui/react-icons"
+import { useAuthContext } from '@/hooks/useAuthContext';
 
 function CreateStory() {
     const [prompt, setPrompt] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
     const { dispatch } = useContext(StoriesContext)
-    const navigate = useNavigate()
+    const navigate = useNavigate();
+    const { user } = useAuthContext()
+    const { token } = user;
 
     const generateStory = async (e) => {
         e.preventDefault();
@@ -23,6 +26,7 @@ function CreateStory() {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
                 },
                 body:JSON.stringify(description)
             });

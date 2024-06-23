@@ -1,3 +1,4 @@
+import { useAuthContext } from "@/hooks/useAuthContext";
 import { createContext, useEffect, useReducer , useState } from "react";
 
 export const StoriesContext = createContext();
@@ -32,11 +33,19 @@ export const StoriesProvider = ({ children }) => {
         stories: []
     });
     const [loading, setLoading] = useState(true);
+    const { user } = useAuthContext()
+    const { token } = user;
 
     useEffect(() => {
         const fetchStories = async () => {
           try {
-            const response = await fetch('http://localhost:4000/api/kahani/all-stories');
+            const response = await fetch('http://localhost:4000/api/kahani/all-stories',{
+                method:"GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
+            });
             const result = await response.json();
             const storiesArray = result['all_stories'];
             dispatch({ type: 'SET_STORIES', payload: storiesArray });

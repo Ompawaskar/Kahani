@@ -1,7 +1,9 @@
 const express = require('express')
 const {getStories,getStory,createStory,answerQuestion,deleteStory} = require('../controllers/storyControllers')
+const requireAuth = require('../middleware/reqAuth')
 
 const router = express.Router()
+router.use(requireAuth);
 
 // All stories
 router.get('/all-stories',getStories)

@@ -13,6 +13,7 @@ import Story from './components/Story/Story.jsx'
 import AllStories from './components/Dashboard/AllStories.jsx'
 import Login from './pages/Login.jsx'
 import SignUp from './pages/SignUp.jsx'
+import { AuthProvider } from './context/AuthContext.jsx'
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -33,9 +34,11 @@ const router = createBrowserRouter(
 )
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-<StoriesProvider >
-  <React.StrictMode>  
-    <RouterProvider router={router} />
-  </React.StrictMode>
-</StoriesProvider>
+<AuthProvider>
+  <StoriesProvider >
+    <React.StrictMode>  
+      <RouterProvider router={router} />
+    </React.StrictMode>
+  </StoriesProvider>
+</AuthProvider>
 )
