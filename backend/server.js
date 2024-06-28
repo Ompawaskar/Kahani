@@ -10,7 +10,7 @@ const app = express()
 
 //Middlewares
 app.use(cors({
-    origin: 'http://localhost:5173' // Allow requests from this origin
+    origin: 'https://kahani-teal.vercel.app/' // Allow requests from this origin
 }));
 app.use(express.json())
 
