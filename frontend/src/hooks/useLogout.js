@@ -9,7 +9,6 @@ export const useLogout = () => {
 
     const logout = () => {
         localStorage.removeItem('user');
-
         dispatch({ type: "LOGOUT" })
         storiesDispatch({ type: "SET_STORIES", payload: null })
     }

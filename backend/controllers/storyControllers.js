@@ -1,9 +1,17 @@
 const Stories = require('../models/storyModel')
+const User = require('../models/userModel')
 require('dotenv').config()
 
 const getStories = async (req, res) => {
+  const { _id } = req.user
+
   try {
-    const stories = await Stories.find().sort({ createdAt: -1 });
+    const stories = await Stories.find({
+      $or: [
+        { status: 'public' },
+        { user_id: _id }
+      ]
+    }).sort({ createdAt: -1 });
 
     if (!stories || stories.length === 0) {
       return res.status(404).json({ message: "No Stories found" })
@@ -58,6 +66,7 @@ const createStory = async (req, res) => {
   try {
     const story = await generateStory(description);
     console.log(story);
+    const title = await generateTitle(story);
     const imagePrompts = await generateImagePrompts(story);
     console.log(imagePrompts);
     let fetchedImages = [];
@@ -69,13 +78,9 @@ const createStory = async (req, res) => {
       const statusUrl = await Promise.all(imagePromises);
 
       const imagesPromises = statusUrl.map(url => get_image_from_url(url))
-      const images2DArray = await Promise.all(imagesPromises);
-      // const images2DArray = []; 
-      // for (let imgUrl of statusUrl) {
-      //   const image = await get_image_from_url(imgUrl);
-      //   images2DArray.push(image);
-      // }
-
+      const validImages = await Promise.all(imagesPromises);
+      const images2DArray = validImages.filter(imgUrl => imgUrl !== null);
+      
       const images = [].concat(...images2DArray);
 
       // Handle potential image fetching errors within the loop
@@ -86,13 +91,15 @@ const createStory = async (req, res) => {
     }
 
     const storyDocument = await Stories.create({
-      title: description,
+      title,
       story,
       images: fetchedImages,
       user_id: _id,
       upvotes:0,
       downvotes:0,
-      status:"private"
+      status:"private",
+      upvotes:[],
+      downvotes:[]
     });
 
     if (!storyDocument) {
@@ -159,6 +166,108 @@ const answerQuestion = async (req, res) => {
 
   } catch (error) {
     res.status(200).json({ error: error.message })
+  }
+}
+
+const handleUpvote = async (req,res) => {
+  const { _id } = req.user
+  const storyId  = req.params.storyId
+  console.log("id",storyId);
+  
+  try {
+    const story = await Stories.findById(storyId);
+    const user = await User.findById(_id);
+
+    if (!story) {
+      return res.status(404).json({ error: 'Story not found' });
+    }
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    
+    if(!story.upvotes.includes(_id)){
+      story.upvotes.push(_id);
+      user.upvotedPosts.push(storyId);
+
+      // Remove any Downvotes if exsists.
+      story.downvotes.pull(_id);
+      user.downvotedPosts.pull(storyId);
+
+      await story.save();
+      await user.save();
+    }
+    else{
+      story.upvotes.pull(_id);
+      user.upvotedPosts.pull(storyId);
+
+      await story.save();
+      await user.save();
+    }
+
+    res.status(200).json({story})
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({error:error.message})
+  }
+}
+
+const handleDownvote = async (req,res) => {
+  const { _id } = req.user
+  const storyId  = req.params.storyId
+
+  try {
+    const story = await Stories.findById(storyId);
+    const user = await User.findById(_id);
+
+    if (!story) {
+      return res.status(404).json({ error: 'Story not found' });
+    }
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    if(!story.downvotes.includes(_id)){
+      story.downvotes.push(_id);
+      user.downvotedPosts.push(storyId);
+
+      // Remove any Downvotes if exsists.
+      story.upvotes.pull(_id);
+      user.upvotedPosts.pull(storyId);
+
+      await story.save();
+      await user.save();
+    }
+    else{
+      story.downvotes.pull(_id);
+      user.downvotedPosts.pull(storyId);
+
+      await story.save();
+      await user.save();
+    }
+    res.status(200).json({story})
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({error:error.message})
+  }
+}
+
+const handleStatusChange = async (req,res) => {
+  const storyId = req.params.storyId;
+  const status = req.body.status;
+
+  try {
+    const story = await Stories.findById(storyId);
+    if(!story){
+      return res.status(500).json({error:"Story Not Found"})
+    }
+
+    story.status = status;
+    await story.save();
+    res.status(200).json({story})
+  } catch (error) {
+    res.status(500).json({error:error.message})
   }
 }
 
@@ -232,9 +341,9 @@ const generateStory = async (description) => {
 
     const extractedText = response.candidates[0].content.parts[0].text;
 
-    const formattedText = extractedText.trim().toLowerCase();
+    const formattedText = extractedText.trim();
 
-    if (formattedText === 'rejected.') {
+    if (formattedText === 'Rejected.') {
       throw new Error("Input Child Friendly Content Only.")
     }
 
@@ -288,35 +397,48 @@ const generateImagePrompts = async (story) => {
   }
 }
 
-// const fetchImageUrlPexels = async (prompt) => {
-//   const PEXELS_API_KEY = process.env.PEXELS_API_KEY;
-//   const PEXELS_API_URL = 'https://api.pexels.com/v1/search';
+const generateTitle = async (story) => {
+  const titlePrompt = `Generate a title for the following story. The response should start and only contain the title. ${story}`;
+  const prompt = {
+    contents: [
+      {
+        parts: [
+          {
+            text: titlePrompt
+          }
+        ]
+      }
+    ]
+  };
+  const key = process.env.GEMINI_KEY
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${key}`;
 
-//   try {
-//     const response = await fetch(`${PEXELS_API_URL}?query=${encodeURIComponent(prompt)}&per_page=15`, {
-//       headers: {
-//         Authorization: PEXELS_API_KEY
-//       }
-//     });
+  try {
+    const result = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(prompt),
+    });
 
-//     if (!response.ok) {
-//       throw new Error(`Error fetching image: ${response.statusText}`);
-//     }
+    const response = await result.json();
 
-//     const data = await response.json();
-//     const photos = data.photos;
-//     if (photos.length > 0) {
-//       return photos[0].src.original;
-//     } else {
-//       return null;
-//     }
-//   } catch (error) {
-//     throw error;
-//   }
-//   ;
+    if (!response || !response.candidates || !response.candidates[0].content || !response.candidates[0].content.parts) {
+      // Handle cases where response is empty or lacks content
+      return null;
+    }
 
-// }
+    const extractedText = response.candidates[0].content.parts[0].text;
+    const formattedTitle = extractedText.trim();
 
+    return formattedTitle;
+
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+}
 const fetchImage = async (prompt) => {
   const MONSTER_API_KEY = process.env.MONSTER_API_KEY;
   const MONSTER_API_URL = 'https://api.monsterapi.ai/v1/generate/sdxl-base';
@@ -376,6 +498,12 @@ const get_image_from_url = async (url) => {
 
       const result = await response.json();
       console.log(result);
+
+      if (result.status === 'FAILED') {
+        console.log(`Image generation failed for URL: ${url}`);
+        return null;
+      }
+
       img_url = result['result']['output'];
       console.log("ImageUrl", img_url);
 
@@ -394,4 +522,4 @@ const get_image_from_url = async (url) => {
   }
 }
 
-module.exports = { getStories, getStory, createStory, answerQuestion, deleteStory }
+module.exports = { getStories, getStory, createStory, answerQuestion, deleteStory , handleUpvote,handleDownvote,handleStatusChange}

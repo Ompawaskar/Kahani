@@ -16,7 +16,15 @@ const userSchema = new Schema({
     username: {
         type: String,
         required: true
-    }
+    },
+    upvotedPosts:{
+        type:[mongoose.Schema.Types.ObjectId],
+        ref:'story'
+    },
+    downvotedPosts:{
+        type:[mongoose.Schema.Types.ObjectId],
+        ref:'story'
+    },
 }, { timestamps: true })
 
 userSchema.statics.signup = async function (email, password , username) {
@@ -42,7 +50,7 @@ userSchema.statics.signup = async function (email, password , username) {
     const salt = await bcrypt.genSalt(10);
     const hash = await bcrypt.hash(password, salt);
 
-    const user = await this.create({ email, password: hash ,username});
+    const user = await this.create({ email, password: hash ,username,upvotedPosts:[],downvotedPosts:[]});
     console.log(user);
     return user;
 

@@ -56,12 +56,12 @@ export function LoginComponent() {
           </Button> : <Button type="submit" className="w-full text-black bg-white hover:bg-white hover:opacity-80 rounded-lg">
             Login
           </Button>}
-          {error ? <p className="text-red-600 text-center">{error}</p> : null}
+          {error ? <p className="text-red-600 text-center">{error}</p> : ""}
 
         </form>
         <div className="mt-4 text-center text-sm pb-8">
           Don&apos;t have an account?{" "}
-          <Link href="#" className="underline">
+          <Link to='/signup' className="underline">
             Sign up
           </Link>
         </div>

@@ -1,4 +1,4 @@
-import { Link, NavLink, Outlet, useNavigate } from "react-router-dom"
+import { Link, NavLink, Outlet } from "react-router-dom"
 import {
   Bell,
   CircleUser,
@@ -28,21 +28,22 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Input } from "@/components/ui/input"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { useAuthContext } from "@/hooks/useAuthContext"
 import { useLogout } from "@/hooks/useLogout"
+import { useContext, useState } from "react"
+
 
 export function Dashboard() {
   
-  const { user } = useAuthContext()
-  const { username } = user.user
+  const { user } = useAuthContext();
+  const username  = user.username
   const { logout } = useLogout();
-  const navigate = useNavigate()
+
+  const [isLoading , setIsLoading] = useState(false);
 
   const handleLogout = () => {
     logout()
-    navigate('/')
   }
   
   return (
@@ -54,10 +55,6 @@ export function Dashboard() {
               <Package2 className="h-6 w-6" />
               <span className="">Welcome, {username}</span>
             </Link>
-            <Button variant="outline" size="icon" className="ml-auto h-8 w-8">
-              <Bell className="h-4 w-4" />
-              <span className="sr-only">Toggle notifications</span>
-            </Button>
           </div>
           <div className="flex-1">
             <nav className="grid items-start px-2 text-sm font-medium lg:px-4">
@@ -126,46 +123,33 @@ export function Dashboard() {
                   className="flex items-center gap-2 text-lg font-semibold"
                 >
                   <Package2 className="h-6 w-6" />
-                  <span className="sr-only">Acme Inc</span>
+                  <span className="sr-only">Kahani.</span>
                 </Link>
-                <Link
-                  href="#"
-                  className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground"
-                >
-                  <Home className="h-5 w-5" />
-                  Dashboard
-                </Link>
-                <Link
-                  href="#"
-                  className="mx-[-0.65rem] flex items-center gap-4 rounded-xl bg-muted px-3 py-2 text-foreground hover:text-foreground"
-                >
-                  <ShoppingCart className="h-5 w-5" />
-                  Orders
-                  <Badge className="ml-auto flex h-6 w-6 shrink-0 items-center justify-center rounded-full">
-                    6
-                  </Badge>
-                </Link>
-                <Link
-                  href="#"
-                  className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground"
-                >
-                  <Package className="h-5 w-5" />
-                  Products
-                </Link>
-                <Link
-                  href="#"
-                  className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground"
-                >
-                  <Users className="h-5 w-5" />
-                  Customers
-                </Link>
-                <Link
-                  href="#"
-                  className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground"
-                >
-                  <LineChart className="h-5 w-5" />
-                  Analytics
-                </Link>
+                <NavLink
+                to="/dashboard"
+                className={({ isActive }) =>
+                  "flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary " +
+                  (isActive ? "bg-muted" : "text-muted-foreground")
+                }
+                end
+              >
+                <Home className="h-4 w-4" />
+                Dashboard
+              </NavLink>
+                <NavLink
+                to='/dashboard/all-stories'
+                className={({ isActive }) => "flex items-center gap-3 rounded-lg px-3 py-2  transition-all hover:text-primary " + (isActive ? " bg-muted" : " text-muted-foreground")}
+              >
+                <ShoppingCart className="h-4 w-4" />
+                All Stories
+              </NavLink>
+                <NavLink
+                to='/dashboard/my-stories'
+                className={({ isActive }) => "flex items-center gap-3 rounded-lg px-3 py-2  transition-all hover:text-primary " + (isActive ? " bg-muted" : " text-muted-foreground")}
+              >
+                <Package className="h-4 w-4" />
+                My Stories
+              </NavLink>
               </nav>
               <div className="mt-auto">
                 <Card>
@@ -194,23 +178,21 @@ export function Dashboard() {
           </div>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="secondary" size="icon" className="rounded-full">
-                <CircleUser className="h-5 w-5" />
+              <Button variant="secondary" size="icon" className="rounded-full border-2 border-purple-300 bg-purple-100">
+                <CircleUser className="h-5 w-5 " />
                 <span className="sr-only">Toggle user menu</span>
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>My Account</DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>Settings</DropdownMenuItem>
-              <DropdownMenuItem>Support</DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick = {handleLogout}>Logout</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </header>
 
-        {<Outlet />}
+        {<Outlet context={{ isLoading, setIsLoading }} />}
       </div>
     </div>
   )

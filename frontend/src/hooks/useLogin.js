@@ -1,16 +1,15 @@
 import { useState } from "react"
 import { useAuthContext } from "./useAuthContext";
-import { useNavigate } from "react-router-dom";
+
 
 export const useLogin = () => {
-    const [error,setError] = useState(null);
+    const [error,setError] = useState("");
     const [loading,setLoading] = useState(false);
     const { dispatch } = useAuthContext();
-    const navigate = useNavigate()
-
+   
     const login = async (user) => {
         setLoading(true)
-        setError(null)
+        setError("")
 
         const response = await fetch("http://localhost:4000/api/user/login",{
             method:"POST",
@@ -25,14 +24,14 @@ export const useLogin = () => {
         if(!response.ok){
             setLoading(false)
             setError(result.error)
-            return
         }
 
+        if(response.ok){
         localStorage.setItem('user',JSON.stringify(result))
-        dispatch({type:"LOGIN",payload:result})
-        navigate('/dashboard')
+        dispatch({type:"LOGIN",payload: result})
         setLoading(false)
-        
+        }
+             
     }
 
     return {login,error,loading}

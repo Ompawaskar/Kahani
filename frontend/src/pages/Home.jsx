@@ -6,9 +6,6 @@ import { StoriesContext } from '@/context/StoriesContext'
 
 function Home() {
 
-    const {stories,dispatch} = useContext(StoriesContext)
-    console.log("Stories",stories);
-
     return (
         
         <div className='py-2 bg-gray-100'>

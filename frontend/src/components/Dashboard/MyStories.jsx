@@ -4,12 +4,20 @@ import StoryCard from './StoryCard'
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Link } from 'react-router-dom'
 import { StoriesContext } from '../../context/StoriesContext'
+import { useAuthContext } from '@/hooks/useAuthContext'
 
 
 function MyStories() {
   const { stories } = useContext(StoriesContext)
+  const { user } = useAuthContext();
+
+  let userStories = [];
+
+  if(stories){
+    userStories = stories.filter((story) => story.user_id === user._id)
+  }
   
-  if (!stories || stories.length === 0) {
+  if (!userStories || userStories.length === 0) {
     return (
       <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
         
@@ -36,8 +44,8 @@ function MyStories() {
   else {
     return (
       <ScrollArea className=" rounded-md border p-4">
-        <div className='max-h-screen grid grid-cols-3 gap-4 m-8'>
-          {stories.map((story) => <StoryCard
+        <div className='max-h-screen grid grid-cols-1 md:grid-cols-3 gap-4 m-8'>
+          {userStories.map((story) => <StoryCard
             key={story._id}
             _id={story._id}
             title={story.title}

@@ -29,7 +29,9 @@ const storySchema = new Schema({
     status:{
         type:String,
         required:true
-    }
+    },
+    upvotes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+    downvotes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
 
 },{timestamps:true});
 

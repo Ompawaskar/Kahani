@@ -7,13 +7,12 @@ import {
 } from "@/components/ui/accordion"
 
 
-
 function Faq() {
     return (
         <div className='bg-gray-100 pt-8 pb-8'>
             <h1 className='my-8 font-semibold font-sans text-center text-4xl'>FAQ</h1>
-            <div className='flex justify-center items-center mb-8'>
-            <Accordion type="single" collapsible className='w-1/2'>
+            <div className='flex justify-center items-center mb-8 mx-4'>
+            <Accordion type="single" collapsible className='md:w-1/2'>
                 <AccordionItem value="item-1">
                     <AccordionTrigger >What is Kahani?</AccordionTrigger>
                     <AccordionContent>

@@ -1,65 +1,104 @@
-import { useAuthContext } from "@/hooks/useAuthContext";
-import { createContext, useEffect, useReducer , useState } from "react";
+import { useAuthContext } from "../hooks/useAuthContext";
+import { createContext, useReducer } from "react";
 
 export const StoriesContext = createContext();
 
-export const StoryReducers = (state, action) => {
-    const storiesArray = state.stories;
+const storyReducer = (state, action) => {
+  const storiesArray = state.stories;
+  const user_id = action.user_id; 
 
-    switch (action.type) {
-        case "ADD_STORIES":
+  switch (action.type) {
+    case "ADD_STORIES":
+      return {
+        ...state,
+        stories: [action.payload, ...storiesArray]
+      };
+
+    case "SET_STORIES":
+      return {
+        ...state,
+        stories: action.payload
+      };
+
+    case "DELETE_STORY":
+      return {
+        ...state,
+        stories: storiesArray.filter((story) => story._id !== action.payload._id)
+      };
+
+    case "STATUS_CHANGE":
+      const {status,storyId} = action.payload
+      return {
+        ...state,
+        stories: state.stories.map((story) => {
+          if(story._id === storyId){
             return {
-                stories:[action.payload, ...storiesArray]
+              ...story,
+              status:status
+            }
+          }
+          return story
+        })
+      }
+
+      case "UPVOTE":
+            return {
+                ...state,
+                stories: state.stories.map(story => {
+                    if (story._id === action.payload) {
+                        return {
+                            ...story,
+                            upvotes: story.upvotes.includes(action.user_id)
+                                ? story.upvotes.filter(userId => userId !== action.user_id)
+                                : [action.user_id, ...story.upvotes],
+                            downvotes: story.downvotes.includes(action.user_id)
+                                ? story.downvotes.filter(userId => userId !== action.user_id)
+                                : story.downvotes
+                        };
+                    }
+                    return story;
+                })
+            };
+        case "DOWNVOTE":
+            return {
+                ...state,
+                stories: state.stories.map(story => {
+                    if (story._id === action.payload) {
+                        return {
+                            ...story,
+                            downvotes: story.downvotes.includes(action.user_id)
+                                ? story.downvotes.filter(userId => userId !== action.user_id)
+                                : [action.user_id, ...story.downvotes],
+                            upvotes: story.upvotes.includes(action.user_id)
+                                ? story.upvotes.filter(userId => userId !== action.user_id)
+                                : story.upvotes
+                        };
+                    }
+                    return story;
+                })
             };
 
-        case "SET_STORIES":
-            return {
-                stories: action.payload     
-            };
-
-        case "DELETE_STORY":
-            return {
-                stories: storiesArray.filter((story) => story._id !== action.payload._id)    
-            };
-
-        default:
-            return state;
-    }
-
+    default:
+      return state;
+  }
 };
 
 export const StoriesProvider = ({ children }) => {
-    const [state, dispatch] = useReducer(StoryReducers, {
-        stories: []
-    });
-    const [loading, setLoading] = useState(true);
-    const { user } = useAuthContext()
-    const { token } = user;
+  const { user } = useAuthContext();
+  const user_id = user ? user._id : null;
+  const [state, dispatch] = useReducer(storyReducer, {
+    stories: [],
+  });
 
-    useEffect(() => {
-        const fetchStories = async () => {
-          try {
-            const response = await fetch('http://localhost:4000/api/kahani/all-stories',{
-                method:"GET",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${token}`
-                },
-            });
-            const result = await response.json();
-            const storiesArray = result['all_stories'];
-            dispatch({ type: 'SET_STORIES', payload: storiesArray });
-          } catch (error) {
-            console.error('Error fetching stories:', error);
-          } finally {
-            setLoading(false);
-          }
-        };
-    
-        fetchStories();
-      }, []);
+  const enhancedDispatch = (action) => {
+    dispatch({ ...action, user_id });
+  };
 
-    return (<StoriesContext.Provider value={{ ...state, dispatch ,loading }}>
-        {children}
-    </StoriesContext.Provider>)
-}
+  return (
+    <StoriesContext.Provider value={{ ...state, dispatch: enhancedDispatch }}>
+      {children}
+    </StoriesContext.Provider>
+  );
+};
+
+export const useStoriesContext = () => useContext(StoriesContext);
