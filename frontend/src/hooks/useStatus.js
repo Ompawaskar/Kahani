@@ -1,7 +1,7 @@
 import { StoriesContext } from "@/context/StoriesContext";
 import { useContext } from "react";
 import { useAuthContext } from "./useAuthContext";
-import { baseUrl } from "Url";
+import { baseUrl } from "../../Url";
 
 export const useStatus = () => {
     const {dispatch ,stories} = useContext(StoriesContext);

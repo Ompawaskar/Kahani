@@ -2,7 +2,7 @@ import { StoriesContext } from '@/context/StoriesContext';
 import { useAuthContext } from '@/hooks/useAuthContext'
 import React, { useContext, useEffect, useState } from 'react'
 import { Navigate } from 'react-router-dom'
-import { baseUrl } from 'Url';
+import { baseUrl } from '../../../Url';
 
 function ProtectedRoutes({ children }) {
     const { user, isLoading, token } = useAuthContext();

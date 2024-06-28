@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import { useAuthContext } from "./useAuthContext";
 import { StoriesContext } from "@/context/StoriesContext";
-import { baseUrl } from "Url";
+import { baseUrl } from "../../Url";
 
 export const useDownVote = () => {
     const { token, dispatch, user } = useAuthContext();

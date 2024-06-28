@@ -31,7 +31,7 @@ import UpvoteButton from './UpvoteButton'
 import { useAuthContext } from '@/hooks/useAuthContext'
 import StatusButton from './StatusButton'
 import DownVoteButton from './DownVoteButton'
-import { baseUrl } from 'Url'
+import { baseUrl } from '../../../Url'
 
 function Story() {
     const { id } = useParams();

@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { useAuthContext } from "./useAuthContext";
-import { baseUrl } from "Url";
+import { baseUrl } from "../../Url";
 
 export const useSignUp = () => {
     const [error,setError] = useState("");

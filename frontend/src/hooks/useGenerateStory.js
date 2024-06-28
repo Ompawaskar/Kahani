@@ -3,7 +3,7 @@ import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { StoriesContext } from "@/context/StoriesContext";
 import { useAuthContext } from "./useAuthContext";
-import { baseUrl } from "Url";
+import { baseUrl } from "../../Url";
 
 export const useGenerateStory = () => {
     const [loading, setLoading] = useState(false);

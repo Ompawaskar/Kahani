@@ -2,7 +2,7 @@
 import { StoriesContext } from "@/context/StoriesContext";
 import { useContext } from "react";
 import { useAuthContext } from "./useAuthContext";
-import { baseUrl } from "Url";
+import { baseUrl } from "../../Url";
 
 export const useUpvote = () => {
     const { stories, dispatch: storiesDispatch } = useContext(StoriesContext);
