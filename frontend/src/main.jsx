@@ -15,6 +15,7 @@ import SignUp from './pages/SignUp.jsx'
 import { AuthProvider } from './context/AuthContext.jsx'
 import PublicRoutes from './components/Routes/PublicRoutes'
 import ProtectedRoutes from './components/Routes/ProtectedRoutes'
+import UserStories from './components/Dashboard/UserStories'
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -25,6 +26,7 @@ const router = createBrowserRouter(
         <Route path='all-stories' element={<AllStories />}/>
         <Route path='story/:id' element={<Story />}/>
         <Route path='my-stories' element={<MyStories />}/>
+        <Route path='user/:user_id' element={<UserStories />}/>
       </Route>
       <Route path='/login' element = {<PublicRoutes> <Login /> </PublicRoutes>} />
       <Route path='/signup' element = {<PublicRoutes> <SignUp /> </PublicRoutes>} />
