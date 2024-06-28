@@ -8,7 +8,7 @@ export default function Footer() {
                 <div className="md:flex md:justify-between">
                     <div className="mb-6 md:mb-0 flex gap-2">
                         <Link to="/" className="flex items-center">
-                            <img src='./logo3.png' className="mr-3 h-16 md:h-12" alt="Logo" />
+                            <img src='../../../public/logo3.png' className="mr-3 h-16 md:h-12" alt="Logo" />
                         </Link>
                         <div className="text-black md:mt-8 mt-2">
                             <h1 className="font-bold text-xl">Get Creative</h1>

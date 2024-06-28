@@ -1,6 +1,7 @@
 import { useContext } from "react";
 import { useAuthContext } from "./useAuthContext";
 import { StoriesContext } from "@/context/StoriesContext";
+import { baseUrl } from "Url";
 
 export const useDownVote = () => {
     const { token, dispatch, user } = useAuthContext();
@@ -8,7 +9,7 @@ export const useDownVote = () => {
 
     const downvote = async (storyid) => {
         try {
-            const response = await fetch(`http://localhost:4000/api/kahani/${storyid}/downvote`, {
+            const response = await fetch(`${baseUrl}/api/kahani/${storyid}/downvote`, {
                 method: "PATCH",
                 headers: {
                     "Authorization": `Bearer ${token}`

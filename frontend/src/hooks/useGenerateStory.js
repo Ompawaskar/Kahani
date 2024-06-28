@@ -3,6 +3,7 @@ import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { StoriesContext } from "@/context/StoriesContext";
 import { useAuthContext } from "./useAuthContext";
+import { baseUrl } from "Url";
 
 export const useGenerateStory = () => {
     const [loading, setLoading] = useState(false);
@@ -17,7 +18,7 @@ export const useGenerateStory = () => {
         const description = { description: prompt };
 
         try {
-            const response = await fetch('http://localhost:4000/api/kahani/', {
+            const response = await fetch(`${baseUrl}/api/kahani/`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

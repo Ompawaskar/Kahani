@@ -31,6 +31,7 @@ import UpvoteButton from './UpvoteButton'
 import { useAuthContext } from '@/hooks/useAuthContext'
 import StatusButton from './StatusButton'
 import DownVoteButton from './DownVoteButton'
+import { baseUrl } from 'Url'
 
 function Story() {
     const { id } = useParams();
@@ -58,7 +59,7 @@ function Story() {
 
     const deleteStory = async () => {
         try {
-            const response = await fetch(`http://localhost:4000/api/kahani/${id}`, {
+            const response = await fetch(`${baseUrl}/api/kahani/${id}`, {
                 method: "DELETE",
                 headers: {
                     "Authorization": `Bearer ${token}`
@@ -92,7 +93,7 @@ function Story() {
         e.preventDefault()
         setLoadingState(true)
         try {
-            const response = await fetch(`http://localhost:4000/api/kahani/question`, {
+            const response = await fetch(`${baseUrl}/api/kahani/question`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

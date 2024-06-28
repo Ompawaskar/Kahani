@@ -2,6 +2,7 @@ import { StoriesContext } from '@/context/StoriesContext';
 import { useAuthContext } from '@/hooks/useAuthContext'
 import React, { useContext, useEffect, useState } from 'react'
 import { Navigate } from 'react-router-dom'
+import { baseUrl } from 'Url';
 
 function ProtectedRoutes({ children }) {
     const { user, isLoading, token } = useAuthContext();
@@ -14,7 +15,7 @@ function ProtectedRoutes({ children }) {
 
         const fetchStories = async () => {
             try {
-                const response = await fetch('http://localhost:4000/api/kahani/all-stories', {
+                const response = await fetch(`${baseUrl}/api/kahani/all-stories`, {
                     method: "GET",
                     headers: {
                         "Authorization": `Bearer ${token}`

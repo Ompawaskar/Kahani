@@ -1,13 +1,14 @@
 import { StoriesContext } from "@/context/StoriesContext";
 import { useContext } from "react";
 import { useAuthContext } from "./useAuthContext";
+import { baseUrl } from "Url";
 
 export const useStatus = () => {
     const {dispatch ,stories} = useContext(StoriesContext);
     const {user , token} = useAuthContext()
     const changeStatus = async (storyId,status) => {
         try {
-            const response = await fetch(`http://localhost:4000/api/kahani/${storyId}/status`, {
+            const response = await fetch(`${baseUrl}/api/kahani/${storyId}/status`, {
                 method: "PATCH",
                 headers: {
                     "Authorization": `Bearer ${token}`,
